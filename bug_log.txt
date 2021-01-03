@@ -1,0 +1,197 @@
+/**    Checkpoint 1 Bugs     **/
+Bug 1:
+Problem: Info mem shows that PG is disabled. Program stuck in boot loop.
+Reason: The struct of PDE and PTE are set in reversed order. Higher bits should go later.
+Difficulty: Very tricky. Takes several hours.
+Fixing: Permuted ~30 lines of code.
+
+Bug 2:
+Problem: Info mem shows that r/w is not allowed in video memory
+Reason: Did not set the r/w bit of PTE to 1
+Difficulty: Simple. Couple Minutes.
+Fixing: One-line change.
+
+Bug 3:
+Problem: Interrupt is not working.
+Reason: STI (Set Interrupt) Flag is not set, so no interrupts can be raised.
+Difficulty: Medium, half an hour.
+Fixing: Add the IF flag in kernel.c
+
+/**      Checkpoint 2 Bugs    **/
+Bug 4:
+Problem: Read Data does not work properly.
+Reason: Used unsigned_int for inode parameters, but in a line of comparison negative value was expected
+Difficulty: Medium, about an hour
+Fixing: One line change
+
+Bug 5:
+Problem: Read Dentry by name gives bad outputs for file with very long name
+Reason: Edge cases missed. When the buf is full no ending null bytes are presented
+Difficulty: Hard, hours
+Fixing: Rewrite the file name matching algorithm
+
+Bug 6: 
+Problem: LS prints trailing garbage bits after correct file name
+Reason: Did not clear buf when referenced again
+Difficulty: Easy, minutes
+Fixing: One line change
+
+Bug 7:
+Problem: Read exe file yields page faults
+Reason: Buffer size was too small
+Difficulty: Tricky, hours
+Fixing: One line change
+
+Bug 8:
+Problem: Test file_close fails
+Reason: Did not implement the test function correctky
+Difficulty: Easy
+Fixing: Rewrite function
+
+Bug 9:
+Problem: RTC oepn does not set frequency to 2Hz
+Reason: frequency = 37268 >> (rate - 1). I set the rate as 2 mistalenly
+Difficulty: Easy
+Fixing: change rate to 15.
+
+Bug 10:
+Problem: RTC write does not change the frequency
+Reason: there was a problem with pointer caseter.
+Difficulty: intermediate
+Fixing: change pointetr casting properly
+
+Bug 11:
+Problem: Scroll was not fucnctioning properly. When scroll is called, fills screen with Ys. 
+Reason: Was not properly shifting lines. 
+Difficulty: Easy
+Fixing: Fixed issue by properly adding indices to move character to next line.  
+
+Bug 12:
+Problem: Scroll down was not fucnctioning properly. When scroll is called, fills screen with first line. 
+Reason: should start copying from bottom
+Difficulty: Easy
+Fixing: Fixed issue just mentioned above. 
+
+/** Checkpoint 3 Bugs */
+Bug 12:
+Problem: Execute failed to load exe file.
+Reason: The unifed read (file abstraction) function was not implemented correctly
+Difficulty: Medium
+Fixing: Rewrite a function
+
+Bug 13:
+Problem: Execute does not work. It throws a page fault. GDB shows that program stucks at context switch assembly linkage
+Reason: The pointer to EIP was not dereferenced
+Difficulty: Easy
+Fixing: One line change.
+
+Bug 14:
+Problem: Execute is stuck after finishing context switching. Page fault occured again.
+Reason: Did not correctly set up the wrapper linkage.
+Difficulty: Hard.
+Fixing: Rewrite part of assembly.
+
+Bug 15:
+Problem: When execute shell, we cannot type characters to the screen.
+Reason: Syscall disabled interrupts. Need STI() to renable it.
+Difficulty: Medium
+Fixing: One line change
+
+Bug 16:
+Problem: When execute command in shell, we meet page fault
+Reason: didnt restore parent esp and ebp
+Difficulty: Intermediate
+Fixing: restore register
+
+/** Checkpoint 4 Bugs */
+Bug 17:
+Problem: Vidmap did not set up the pages correctly
+Reason: Tried to change existent page table rather than make the new one
+Difficulty: Median
+Fixing: Align a new page table to entry 33 of page directory
+
+Bug 17:
+Problem: Programs dont execute when we have leading spaces
+Reason: Did not check if we have leading spaces when parsing
+Difficulty: Walk in the park
+Fixing: Rewrite the parsing work flow.
+
+Bug 18:
+Problem: Backspace delete OS391>
+Reason: backspace never check length of buffer
+Difficulty: easy 
+Fixing: add buffer size check to backspace
+
+Bug 19:
+Problem: OS391> never shows up after control l
+Reason: because we never writes it
+Difficulty: intermediate
+Fixing: write "OS391> " after control l
+
+Bug 20:
+Problem: putc never scrolls down when it gets to the left bottom of the terminal
+Reason: we didnt call scroll
+Difficulty: intermediate
+Fixing: call scroll in putc
+
+Bug 21:
+Problem: cat frame0 does not work
+Reason: write rejects over 128 characters to be written to terminal
+Difficulty: Hard
+fixing: delete the max length check from terminal write
+
+Bug 22:
+Problem: echo doesnt work properly
+Reason: keyboard buffer doesnt clear after terminal read
+Difficulty: walk in the park
+fix: clear proper line buffer.
+
+/** Checkpoint 5 Bugs */
+Bug 23:
+Problem: Shell raises page fault upon start.
+Reason: Updated running process id in scheduler before a sanity check (when terminal has no process, should wait until next time when scheduler is called )
+Difficulty: Easy
+Fixing: Line Switch
+
+Bug 24:
+Problem: Terminal switch displays weird inputs when receiving keyboard interrupt
+Reason: Using trap gates 
+Difficulty: Hard
+Fixing: Using interrupt gate instead
+
+Bug 25:
+Problem: Terminal switch freezes everything on screen sometimes
+Reason: PID was not properly initialized to -1
+Difficulty: Easy
+Fixing: Re-write initialization rountine
+
+Bug 26:
+Problem: Multiple garbage inputs for execute system call causes an exception
+Reason: Even when execute returns failure upon garbage input, the pcb wss initialized, causing a false indication of "incrementing process amount"
+Difficulty: Easy
+Fixing: When execute fails, reset the initialized pcb to "inexistent"
+
+Bug 27:
+Problem: Keyboard input shows up on wrong positions on terminal
+Reason: With scheduling, need to restore vid. mem. everytime when writing to terminal. Also, putc() needs to be terminal-specific
+Difficulty: Hard
+Fixing: Rewrite putc(); modify the cursor update routine; rewrite the keyboard interrupt workflow to include video memory restoring
+
+Bug 28:
+Problem: Terminal cannot run multiple tasks
+Reason: In the halt() system call, the active pcb in running terminal is not correctly updated
+Difficulty: Easy
+Fixing: Several lines change in halt()
+
+Bug 29:
+Problem: "OS391>" appears sometimes even if we're not in shell
+Reason: Edge cases missed
+Difficulty: Medium
+Fixing: Added a shell flag in pcb struct and wrote routines of condition check
+
+Bug 30:
+Problem: Backspace has some weird behavior
+Reason: The line buffer handling has problem.
+Difficulty: Easy
+Fixing: Change some lines in keyboard.c
+
